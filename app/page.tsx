@@ -65,8 +65,8 @@ export default function Page() {
       setError('Please enter your full name.');
       return;
     }
-    if (!/^[0-9]{5,12}$/.test(academicNumber.trim())) {
-      setError('Academic number must be 5 to 12 digits.');
+    if (!/^[0-9]{10}$/.test(academicNumber.trim())) {
+      setError('Academic number must be exactly 10 digits.');
       return;
     }
 
@@ -155,7 +155,8 @@ export default function Page() {
                 inputMode="numeric"
                 required
                 value={academicNumber}
-                onChange={e => setAcademicNumber(e.target.value.replace(/\D/g, '').slice(0, 12))}
+                maxLength={10}
+                onChange={e => setAcademicNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-sm font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:bg-white transition"
               />
             </div>

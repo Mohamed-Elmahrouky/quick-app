@@ -9,7 +9,7 @@ export const submissionSchema = z.object({
   academicNumber: z
     .string()
     .trim()
-    .regex(/^[0-9]{5,12}$/, 'Academic number must be 5–12 digits'),
+    .regex(/^[0-9]{10}$/, 'Academic number must be exactly 10 digits'),
   projectId: z
     .number()
     .int()
