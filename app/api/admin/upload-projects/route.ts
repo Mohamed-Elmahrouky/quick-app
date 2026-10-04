@@ -27,13 +27,26 @@ export async function POST(request: Request) {
     const titles: string[] = [];
 
     worksheet.eachRow((row, rowNumber) => {
-      if (rowNumber === 1) return; // skip header
-      const val = row.getCell(1).value?.toString().trim();
-      if (val) titles.push(val);
+      if (rowNumber === 1) return; // skip header row
+      const cell1 = row.getCell(1).value?.toString().trim();
+      const cell2 = row.getCell(2).value?.toString().trim();
+
+      // If column 2 has text, prefer column 2 (as column 1 might be index/number)
+      let title = '';
+      if (cell2 && cell2.length > 0) {
+        title = cell2;
+      } else if (cell1 && cell1.length > 0 && isNaN(Number(cell1))) {
+        title = cell1;
+      }
+
+      if (title) titles.push(title);
     });
 
     if (titles.length === 0) {
-      return NextResponse.json({ error: 'No project titles found in the file. Put titles in column A, row 2 onward.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No project titles found. Ensure project names are in column A or column B.' },
+        { status: 400 }
+      );
     }
 
     const rows = titles.map(title => ({ title }));
