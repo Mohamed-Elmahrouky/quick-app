@@ -1,0 +1,225 @@
+const { Client } = require('pg');
+
+const projects = [
+  { id: 1, title: "Online Job Portal (job posting + applications)" },
+  { id: 2, title: "College Event Management System" },
+  { id: 3, title: "Library Management System" },
+  { id: 4, title: "Hospital Appointment & Billing System" },
+  { id: 5, title: "Student Attendance Tracking System (web/mobile)" },
+  { id: 6, title: "Online Food Ordering System (restaurant + delivery)" },
+  { id: 7, title: "E-commerce Product Review & Rating System" },
+  { id: 8, title: "School Fee Collection System" },
+  { id: 9, title: "Online Bus Ticket Reservation System" },
+  { id: 10, title: "Complaint/Feedback Tracking System (citizen/student complaints)" },
+  { id: 11, title: "Campus Maintenance Request System (repairs, complaints, status)" },
+  { id: 12, title: "Inventory Management System (stock in/out + alerts)" },
+  { id: 13, title: "Vehicle Service Booking System (garage + customers)" },
+  { id: 14, title: "Pharmacy Sales & Stock Management System" },
+  { id: 15, title: "Course Registration System (pre-requisites, credits)" },
+  { id: 16, title: "Online Exam/Quiz System (MCQ + results)" },
+  { id: 17, title: "Smart Parking Management System (slots + billing)" },
+  { id: 18, title: "Document Management System (upload, approvals, audit trail)" },
+  { id: 19, title: "Restaurant Table Reservation System" },
+  { id: 20, title: "Expense Tracker System (budget categories + reports)" },
+  { id: 21, title: "Smart Waste Collection Scheduling System (pickup requests)" },
+  { id: 22, title: "Travel Booking System (flights/hotels itinerary management)" },
+  { id: 23, title: "Customer Support Ticketing System (status + SLA)" },
+  { id: 24, title: "Payroll Management System (employees + payslips)" },
+  { id: 25, title: "Gym Membership & Class Booking System" },
+  { id: 26, title: "Real Estate Listing & Inquiry System" },
+  { id: 27, title: "Online Donation Platform (campaigns + receipts)" },
+  { id: 28, title: "University Hostel Management System (room allocation + requests)" },
+  { id: 29, title: "Attendance + Performance Dashboard System (teacher/admin views)" },
+  { id: 30, title: "Community Learning/Training Management System (courses + enrollment)" },
+  { id: 31, title: "Ride-Sharing Driver Matching System" },
+  { id: 32, title: "Smart Complaint Escalation System" },
+  { id: 33, title: "Online Appointment Booking for Clinics" },
+  { id: 34, title: "Pharmacy Online Ordering & Delivery Tracking" },
+  { id: 35, title: "Digital Certificate Verification System" },
+  { id: 36, title: "Event Ticketing with QR Check-in" },
+  { id: 37, title: "E-Wallet Transaction Monitoring System" },
+  { id: 38, title: "Carpool Scheduling & Payments System" },
+  { id: 39, title: "Tenant Maintenance Request System" },
+  { id: 40, title: "Museum Ticketing & Guided Tour Scheduling" },
+  { id: 41, title: "Volunteer Management System" },
+  { id: 42, title: "Disaster Alert & Resource Allocation System" },
+  { id: 43, title: "Emergency Ambulance Dispatch System" },
+  { id: 44, title: "Academic Advisor Appointment System" },
+  { id: 45, title: "Internship Management System" },
+  { id: 46, title: "Scholarship Application & Approval System" },
+  { id: 47, title: "Learning Management System (LMS) Course Admin" },
+  { id: 48, title: "Student Grading & Rubrics System" },
+  { id: 49, title: "Attendance via QR Code System" },
+  { id: 50, title: "Research Publication Submission System" },
+  { id: 51, title: "Journal Peer Review Workflow System" },
+  { id: 52, title: "Conference Paper Submission & Review System" },
+  { id: 53, title: "E-Government Document Request System" },
+  { id: 54, title: "Online License Application Tracking System" },
+  { id: 55, title: "Water Supply Complaint & Billing System" },
+  { id: 56, title: "Electricity Bill Estimation & Payment System" },
+  { id: 57, title: "Smart Meter Fault Reporting System" },
+  { id: 58, title: "Waste Collection Service Scheduling System" },
+  { id: 59, title: "Recycling Collection Rewards System" },
+  { id: 60, title: "Community Polls & Voting System" },
+  { id: 61, title: "Neighborhood Security Alert Platform" },
+  { id: 62, title: "Lost & Found Management System" },
+  { id: 63, title: "University Transport Route Tracking System" },
+  { id: 64, title: "Cafeteria Menu & Online Ordering System" },
+  { id: 65, title: "Smart Queue Management System" },
+  { id: 66, title: "Restaurant Reservation + Waitlist System" },
+  { id: 67, title: "Hotel Booking Admin & Room Availability System" },
+  { id: 68, title: "Hostel Mess Menu & Meal Plan System" },
+  { id: 69, title: "Laundry Pickup & Delivery Scheduling System" },
+  { id: 70, title: "Car Service Booking with Status Updates" },
+  { id: 71, title: "Insurance Claim Submission & Tracking System" },
+  { id: 72, title: "Medical Lab Test Ordering & Result Delivery System" },
+  { id: 73, title: "Appointment Reminder (SMS/Email) System" },
+  { id: 74, title: "Medication Reminder & Adherence Tracker" },
+  { id: 75, title: "Fitness Class Membership & Attendance System" },
+  { id: 76, title: "Inventory Procurement & Reorder System" },
+  { id: 77, title: "Warehouse Damage/Return Management System" },
+  { id: 78, title: "Retail Discount Coupon Redemption System" },
+  { id: 79, title: "Online Quiz Competition Platform" },
+  { id: 80, title: "Exam Proctoring Audit Log System" },
+  { id: 81, title: "Question Bank Management System" },
+  { id: 82, title: "Student Club Membership Management" },
+  { id: 83, title: "Sports Tournament Registration System" },
+  { id: 84, title: "League Fixture Generator System" },
+  { id: 85, title: "Coach Performance Review System" },
+  { id: 86, title: "Expense Claim & Reimbursement System" },
+  { id: 87, title: "Procurement Approval Workflow System" },
+  { id: 88, title: "Supplier Management System" },
+  { id: 89, title: "HR Leave Request System" },
+  { id: 90, title: "Staff Training Management System" },
+  { id: 91, title: "Smart Timetable Generator with Clash Detection" },
+  { id: 92, title: "Exam Schedule Planner with Room & Invigilator Allocation" },
+  { id: 93, title: "Student Study Planner with Progress Analytics" },
+  { id: 94, title: "GPA Calculator & Degree Progress Tracker with What-If Scenarios" },
+  { id: 95, title: "Peer Tutoring Marketplace with Ratings & Scheduling" },
+  { id: 96, title: "Group Project Collaboration Tool with Task Boards" },
+  { id: 97, title: "Assignment Plagiarism Similarity Checker" },
+  { id: 98, title: "Online Code Editor & Auto-Grader for Programming Labs" },
+  { id: 99, title: "SQL Practice Platform with Automatic Query Checking" },
+  { id: 100, title: "Thesis Topic & Supervisor Matching System" },
+  { id: 101, title: "Final Year Project Repository with Duplicate Detection" },
+  { id: 102, title: "Campus Indoor Navigation & Map Guide" },
+  { id: 103, title: "Campus Event Recommender Based on Student Interests" },
+  { id: 104, title: "Used Textbook Marketplace with In-App Chat" },
+  { id: 105, title: "Career Path & Skill Gap Analysis Tool" },
+  { id: 106, title: "Resume Builder with ATS Score Checker" },
+  { id: 107, title: "Hackathon Team Matching & Management Platform" },
+  { id: 108, title: "Library Seat Booking & Live Occupancy Tracker" },
+  { id: 109, title: "Flashcard App with Spaced Repetition" },
+  { id: 110, title: "Anonymous Course Evaluation & Feedback Analytics" },
+  { id: 111, title: "Alumni Employment Tracer System" },
+  { id: 112, title: "Faculty Workload Distribution System" },
+  { id: 113, title: "Course Prerequisite Graph Visualizer & Semester Planner" },
+  { id: 114, title: "Academic Calendar & Deadline Aggregator" },
+  { id: 115, title: "Peer Code Review Platform" },
+  { id: 116, title: "Freshman Mentor-Mentee Matching System" },
+  { id: 117, title: "Student Startup Idea Pitching & Voting Platform" },
+  { id: 118, title: "Interactive Algorithm Visualizer" },
+  { id: 119, title: "Virtual Physics Lab Simulator" },
+  { id: 120, title: "Citation & Bibliography Manager" },
+  { id: 121, title: "Student Magazine Publishing Platform with Editorial Workflow" },
+  { id: 122, title: "URL Shortener with Click Analytics" },
+  { id: 123, title: "Code Snippet Sharing Platform with Collections" },
+  { id: 124, title: "API Uptime Monitoring Dashboard" },
+  { id: 125, title: "Log Analyzer & Visualization Dashboard" },
+  { id: 126, title: "Password Manager with Client-Side Encryption" },
+  { id: 127, title: "Secure Messaging App with End-to-End Encryption" },
+  { id: 128, title: "Real-Time Chat App with Rooms & File Sharing" },
+  { id: 129, title: "Collaborative Online Whiteboard" },
+  { id: 130, title: "Markdown Blog CMS with Role-Based Access" },
+  { id: 131, title: "Feature Flag Management Dashboard" },
+  { id: 132, title: "Personal Knowledge Base with Linked Notes" },
+  { id: 133, title: "IoT Smart Classroom Monitoring Dashboard (Simulated Sensors)" },
+  { id: 134, title: "Open Data Explorer for Local Statistics" },
+  { id: 135, title: "Fake News Detector Web App" },
+  { id: 136, title: "Student Performance Prediction Dashboard" },
+  { id: 137, title: "Spam Email Classifier Web App" },
+  { id: 138, title: "Handwritten Digit Recognition Web App" },
+  { id: 139, title: "University FAQ Chatbot with Document Search" },
+  { id: 140, title: "Social Media Sentiment Analysis Dashboard" },
+  { id: 141, title: "Resume Parser & Keyword Extractor" },
+  { id: 142, title: "Plant Disease Detection from Leaf Images" },
+  { id: 143, title: "Lecture Notes Summarizer Using NLP" },
+  { id: 144, title: "Speech-to-Text Lecture Transcription & Search Tool" },
+  { id: 145, title: "Customer Churn Prediction Dashboard" },
+  { id: 146, title: "House Price Prediction Web App" },
+  { id: 147, title: "Stock Price Trend Visualizer with Forecasting" },
+  { id: 148, title: "Traffic Accident Hotspot Analysis Dashboard" },
+  { id: 149, title: "Smart Crop Recommendation System for Farmers" },
+  { id: 150, title: "Symptom Checker & Nearby Clinic Finder" },
+  { id: 151, title: "Blood Donor Emergency Request Network" },
+  { id: 152, title: "Diabetes Glucose Log & Trend Analysis" },
+  { id: 153, title: "Workout Plan Generator & Progress Tracker" },
+  { id: 154, title: "Meal Planner with Nutrition Targets" },
+  { id: 155, title: "Recipe Finder from Available Ingredients" },
+  { id: 156, title: "Roommate Matching Platform" },
+  { id: 157, title: "Student Rental Finder with Map Search" },
+  { id: 158, title: "Book Exchange & Peer Lending Network" },
+  { id: 159, title: "Neighborhood Tool Sharing Network" },
+  { id: 160, title: "Language Exchange Partner Matching" },
+  { id: 161, title: "Collaborative Playlist Builder Using a Music API" },
+  { id: 162, title: "Crowdsourced Public Transport Delay Reporter" },
+  { id: 163, title: "Accessibility Barrier Reporting Map" },
+  { id: 164, title: "Local Tourism Guide with Reviews & Map" },
+  { id: 165, title: "Photography Contest Platform with Judging" },
+  { id: 166, title: "Personal Finance Dashboard with CSV Import & Auto-Categorization" },
+  { id: 167, title: "Small Shop POS with Barcode Scanning" },
+  { id: 168, title: "Inventory Demand Forecasting System" },
+  { id: 169, title: "Price Tracker for Online Products" },
+  { id: 170, title: "Smart Grocery List & Pantry Tracker with Expiry Alerts" },
+  { id: 171, title: "Freelance Gig Marketplace" },
+  { id: 172, title: "Online Auction & Bidding Platform" },
+  { id: 173, title: "Course Marketplace for Instructors" },
+  { id: 174, title: "Discussion Forum with Reputation & Moderation" },
+  { id: 175, title: "Delivery Route Optimization System" },
+  { id: 176, title: "Public Transport Journey Planner" },
+  { id: 177, title: "Online Survey Builder with Conditional Logic & Analytics" },
+  { id: 178, title: "Document OCR & Auto-Classification System" },
+  { id: 179, title: "Secure File Sharing with Expiring Links & Access Logs" },
+  { id: 180, title: "Multi-Vendor E-commerce Marketplace with Commission Splitting" }
+];
+
+async function updateProjects() {
+  const client = new Client({
+    connectionString: 'postgresql://postgres.zksrppafvmlijppsdldo:IYUSAZ1kiepWXjh0@aws-0-eu-west-2.pooler.supabase.com:6543/postgres',
+    ssl: { rejectUnauthorized: false }
+  });
+
+  await client.connect();
+  console.log('Connected to Postgres.');
+
+  // Truncate existing projects
+  await client.query('TRUNCATE table public.projects RESTART IDENTITY CASCADE;');
+  console.log('Existing projects cleared.');
+
+  // Insert the 180 new projects
+  for (const p of projects) {
+    await client.query(
+      'INSERT INTO public.projects (id, title) VALUES ($1, $2);',
+      [p.id, p.title]
+    );
+  }
+  console.log(`Inserted ${projects.length} projects successfully!`);
+
+  // Set sequence to 180 so any new added project starts from 181
+  await client.query("SELECT setval('public.projects_id_seq', 180, true);");
+  console.log('Sequence set to 180 (next will be 181).');
+
+  // Verify
+  const countRes = await client.query('SELECT COUNT(*) FROM public.projects;');
+  console.log('Total projects in DB now:', countRes.rows[0].count);
+
+  const sample = await client.query('SELECT id, title FROM public.projects WHERE id IN (1, 91, 180) ORDER BY id;');
+  console.log('Sample rows:', sample.rows);
+
+  await client.end();
+}
+
+updateProjects().catch(err => {
+  console.error('Update error:', err);
+  process.exit(1);
+});
